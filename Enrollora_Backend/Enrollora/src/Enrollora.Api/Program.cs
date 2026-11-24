@@ -81,7 +81,7 @@ builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<ICancellationRequestService, CancellationRequestService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-
+builder.Services.AddScoped<ICourseReviewService, CourseReviewService>();
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionHandler>();

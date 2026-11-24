@@ -1,0 +1,180 @@
+
+<div class="reviews-page">
+
+  <header>
+    <span class="eyebrow">STUDENT EXPERIENCE</span>
+    <h1>Course Reviews</h1>
+    <p>Share your feedback about the courses you are enrolled in.</p>
+  </header>
+
+  @if (error()) {
+    <div class="alert error">
+      {{ error() }}
+    </div>
+  }
+
+  @if (message()) {
+    <div class="alert success">
+      {{ message() }}
+    </div>
+  }
+
+  <section class="panel selector-panel">
+
+    <label for="courseSelect">
+      Choose an enrolled course
+    </label>
+
+    <select
+      id="courseSelect"
+      [(ngModel)]="selectedCourseId"
+      (change)="selectCourse()">
+
+      <option [ngValue]="0">
+        Select course
+      </option>
+
+      @for (item of enrollments(); track item.enrollmentId) {
+
+        <option [ngValue]="item.courseId">
+          {{ item.courseName }}
+        </option>
+
+      }
+
+    </select>
+
+    @if (enrollments().length === 0) {
+      <p>
+        You need an active course enrollment before submitting a review.
+      </p>
+    }
+
+  </section>
+
+  @if (loading()) {
+    <div class="panel">
+      Loading reviews...
+    </div>
+  }
+
+  @if (summary(); as data) {
+
+    <section class="panel summary">
+
+      <div>
+        <h2>{{ data.courseName }}</h2>
+        <p>{{ data.totalReviews }} student review(s)</p>
+      </div>
+
+      <strong>
+        ★ {{ data.averageRating | number:'1.1-1' }} / 5
+      </strong>
+
+    </section>
+
+    <section class="panel review-form">
+
+      <h2>
+        {{ mine() ? 'Update your review' : 'Write a review' }}
+      </h2>
+
+      <label for="rating">
+        Your Rating
+      </label>
+
+      <select id="rating" [(ngModel)]="rating">
+
+        <option [ngValue]="5">5 - Excellent</option>
+        <option [ngValue]="4">4 - Very Good</option>
+        <option [ngValue]="3">3 - Good</option>
+        <option [ngValue]="2">2 - Fair</option>
+        <option [ngValue]="1">1 - Poor</option>
+
+      </select>
+
+      <label for="comment">
+        Your Feedback
+      </label>
+
+      <textarea
+        id="comment"
+        rows="4"
+        maxlength="1000"
+        [(ngModel)]="comment"
+        placeholder="Share your experience...">
+      </textarea>
+
+      <div class="actions">
+
+        <button
+          (click)="saveReview()"
+          [disabled]="saving()">
+
+          {{ saving()
+            ? 'Saving...'
+            : (mine() ? 'Update Review' : 'Submit Review') }}
+
+        </button>
+
+        @if (mine()) {
+
+          <button
+            class="danger"
+            (click)="deleteReview()">
+
+            Delete My Review
+
+          </button>
+
+        }
+
+      </div>
+
+    </section>
+
+    <section class="review-list">
+
+      <h2>Student Feedback</h2>
+
+      @for (review of data.reviews; track review.courseReviewId) {
+
+        <article class="panel review-card">
+
+          <div class="review-heading">
+
+            <strong>{{ review.studentName }}</strong>
+
+            <span>
+              ★ {{ review.rating }}/5
+            </span>
+
+          </div>
+
+          <p>{{ review.comment }}</p>
+
+          <small>
+            {{ review.createdAt | date:'mediumDate' }}
+
+            @if (review.updatedAt) {
+              · Updated
+            }
+          </small>
+
+        </article>
+
+      }
+
+      @if (data.reviews.length === 0) {
+
+        <div class="panel">
+          No reviews yet. Be the first to share feedback.
+        </div>
+
+      }
+
+    </section>
+
+  }
+
+</div>

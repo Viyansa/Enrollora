@@ -40,6 +40,45 @@ public interface ICourseService
     Task DeactivateAsync(int id, CancellationToken ct);
 }
 
+public interface ICourseReviewService
+{
+    Task<CourseReviewSummaryResponse> GetForCourseAsync(
+        int courseId,
+        CancellationToken ct
+    );
+
+    Task<CourseReviewResponse?> GetMineForCourseAsync(
+        int studentId,
+        int courseId,
+        CancellationToken ct
+    );
+
+    Task<IReadOnlyList<CourseReviewResponse>> GetAllAsync(
+        CancellationToken ct
+    );
+
+    Task<CourseReviewResponse> CreateAsync(
+        int studentId,
+        int courseId,
+        SaveCourseReviewRequest request,
+        CancellationToken ct
+    );
+
+    Task<CourseReviewResponse> UpdateAsync(
+        int studentId,
+        int reviewId,
+        SaveCourseReviewRequest request,
+        CancellationToken ct
+    );
+
+    Task DeleteAsync(
+        int studentId,
+        int reviewId,
+        CancellationToken ct
+    );
+}
+
+
 public interface IEnrollmentService
 {
     Task<PagedResult<EnrollmentResponse>> GetAllAsync(EnrollmentQuery query, CancellationToken ct);

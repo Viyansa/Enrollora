@@ -134,6 +134,47 @@ namespace Enrollora.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Enrollora.Api.Models.CourseReview", b =>
+                {
+                    b.Property<int>("CourseReviewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CourseReviewId"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("CourseReviewId");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("StudentId", "CourseId")
+                        .IsUnique();
+
+                    b.ToTable("CourseReviews", t =>
+                        {
+                            t.HasCheckConstraint("CK_CourseReviews_Rating", "[Rating] >= 1 AND [Rating] <= 5");
+                        });
+                });
+
             modelBuilder.Entity("Enrollora.Api.Models.Enrollment", b =>
                 {
                     b.Property<int>("EnrollmentId")
@@ -234,6 +275,25 @@ namespace Enrollora.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Enrollment");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Enrollora.Api.Models.CourseReview", b =>
+                {
+                    b.HasOne("Enrollora.Api.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Enrollora.Api.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
 
                     b.Navigation("Student");
                 });

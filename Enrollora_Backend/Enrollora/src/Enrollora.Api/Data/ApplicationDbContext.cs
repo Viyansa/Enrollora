@@ -11,6 +11,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
     public DbSet<CancellationRequest> CancellationRequests => Set<CancellationRequest>();
+    public DbSet<CourseReview> CourseReviews => Set<CourseReview>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -73,5 +74,26 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
         modelBuilder.Entity<CancellationRequest>()
             .HasIndex(x => new { x.EnrollmentId, x.Status });
+            modelBuilder.Entity<CourseReview>()
+    .HasIndex(x => new { x.StudentId, x.CourseId })
+    .IsUnique();
+
+modelBuilder.Entity<CourseReview>()
+    .HasOne(x => x.Student)
+    .WithMany()
+    .HasForeignKey(x => x.StudentId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+modelBuilder.Entity<CourseReview>()
+    .HasOne(x => x.Course)
+    .WithMany()
+    .HasForeignKey(x => x.CourseId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+modelBuilder.Entity<CourseReview>()
+    .ToTable(t => t.HasCheckConstraint(
+        "CK_CourseReviews_Rating",
+        "[Rating] >= 1 AND [Rating] <= 5"
+    ));
     }
 }

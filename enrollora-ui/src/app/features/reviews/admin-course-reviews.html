@@ -1,0 +1,93 @@
+
+<div class="admin-reviews">
+
+  <header>
+
+    <span>FEEDBACK MANAGEMENT</span>
+
+    <h1>Course Reviews</h1>
+
+    <p>
+      View student ratings and feedback across all courses.
+    </p>
+
+  </header>
+
+  @if (error()) {
+
+    <div class="alert">
+      {{ error() }}
+    </div>
+
+  }
+
+  <section class="stats">
+
+    <div>
+      <small>Total Reviews</small>
+      <strong>{{ reviews().length }}</strong>
+    </div>
+
+    <div>
+      <small>Average Rating</small>
+      <strong>
+        ★ {{ average | number:'1.1-1' }} / 5
+      </strong>
+    </div>
+
+  </section>
+
+  @if (loading()) {
+
+    <p>Loading reviews...</p>
+
+  } @else if (reviews().length === 0) {
+
+    <div class="empty">
+      No course reviews have been submitted yet.
+    </div>
+
+  } @else {
+
+    <div class="review-table">
+
+      <div class="table-head">
+
+        <span>Course / Student</span>
+        <span>Rating</span>
+        <span>Feedback</span>
+        <span>Date</span>
+
+      </div>
+
+      @for (review of reviews(); track review.courseReviewId) {
+
+        <article class="table-row">
+
+          <div>
+
+            <strong>{{ review.courseName }}</strong>
+
+            <small>{{ review.studentName }}</small>
+
+          </div>
+
+          <strong class="rating">
+            ★ {{ review.rating }}/5
+          </strong>
+
+          <p>{{ review.comment }}</p>
+
+          <small>
+            {{ review.createdAt | date:'mediumDate' }}
+          </small>
+
+        </article>
+
+      }
+
+    </div>
+
+  }
+
+</div>
