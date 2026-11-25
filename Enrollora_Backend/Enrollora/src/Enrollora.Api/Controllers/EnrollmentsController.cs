@@ -41,10 +41,18 @@ public sealed class EnrollmentsController(IEnrollmentService service) : Controll
         CreateEnrollmentRequest request, CancellationToken ct)
     {
         var result = await service.CreateAsync(CurrentStudentId(), request.CourseId, ct);
-        return CreatedAtAction(nameof(GetMine), result);
+        return CreatedAtAction(nameof(GetMine), new { }, result);
     }
 
-    private int CurrentStudentId() =>
-        int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? throw new UnauthorizedAccessException("Student identity is missing."));
+   private int CurrentStudentId()
+{
+    var studentIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (!int.TryParse(studentIdClaim, out var studentId) || studentId <= 0)
+    {
+        throw new UnauthorizedAccessException("Invalid student identity.");
+    }
+
+    return studentId;
+}
 }
